@@ -12,6 +12,7 @@ export function Login() {
     const form = useForm<LoginValues>({
         resolver: zodResolver(LoginValues),
         defaultValues: {
+            name: "",
             email: "",
             password: "",
         },
@@ -22,9 +23,24 @@ export function Login() {
     };
 
     return (
-        <div>
+        <div className="p-10 text-black bg-white rounded-lg">
             <Form {...form}>
-                <form className="flex flex-col w-full gap-5" onSubmit={form.handleSubmit(onSubmit)}>
+                <form className="flex flex-col w-full" onSubmit={form.handleSubmit(onSubmit)}>
+                    <FormField
+                        control={form.control}
+                        name="name"
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel>Nombre</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Ingrese su nombre" {...field} />
+                                </FormControl>
+                                <div className="h-[20px]">
+                                    <FormMessage />
+                                </div>
+                            </FormItem>
+                        )}
+                    />
                     <FormField
                         control={form.control}
                         name="email"
@@ -34,7 +50,9 @@ export function Login() {
                                 <FormControl>
                                     <Input placeholder="Ingrese su correo" type="email" {...field} />
                                 </FormControl>
-                                <FormMessage />
+                                <div className="h-[20px]">
+                                    <FormMessage />
+                                </div>
                             </FormItem>
                         )}
                     />
@@ -47,17 +65,19 @@ export function Login() {
                                 <FormControl>
                                     <Input placeholder="Ingrese su contraseña" type="password" {...field} />
                                 </FormControl>
-                                <FormMessage />
+                                <div className="h-[20px]">
+                                    <FormMessage />
+                                </div>
                             </FormItem>
                         )}
                     />
-                    <Button type="submit" variant={"secondary"}>
+                    <Button className="mt-2" type="submit">
                         Ingresar
                     </Button>
                 </form>
             </Form>
-            <Button asChild>
-                <Link to={"/fields"}>canchitas</Link>
+            <Button asChild className="w-full mt-4" variant={"outline"}>
+                <Link to={"/fields"}>canchitas - borrar este</Link>
             </Button>
         </div>
     );
