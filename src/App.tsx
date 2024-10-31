@@ -6,6 +6,7 @@ import {FieldDetail} from "./components/views/field-detail";
 import {Fields} from "./components/views/fields";
 import {Home} from "./components/views/home";
 import {Login} from "./components/views/login";
+import {NotFound} from "./components/views/not-found";
 
 function App() {
     return (
@@ -16,8 +17,9 @@ function App() {
             </Route>
             <Route element={<Layout />}>
                 <Route element={<Fields />} path="/fields" />
-                <Route element={<FieldDetail />} path="/field-detail" />
+                <Route element={<FieldDetail />} path="/field-detail/:id" />
             </Route>
+            <Route element={<NotFound />} path="*" />
         </Routes>
     );
 }
