@@ -7,6 +7,7 @@ import {Fields} from "./components/views/fields";
 import {Home} from "./components/views/home";
 import {Login} from "./components/views/login";
 import {NotFound} from "./components/views/not-found";
+import {Reservation} from "./components/views/reservation";
 
 function App() {
     return (
@@ -18,6 +19,7 @@ function App() {
             <Route element={<Layout />}>
                 <Route element={<Fields />} path="/fields" />
                 <Route element={<FieldDetail />} path="/field-detail/:id" />
+                <Route element={<Reservation />} path="/reservation" />
             </Route>
             <Route element={<NotFound />} path="*" />
         </Routes>

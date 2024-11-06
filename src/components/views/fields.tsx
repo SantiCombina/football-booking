@@ -20,7 +20,21 @@ export function Fields() {
                         to={`/field-detail/${field.id}`}
                     >
                         <span className="text-xl font-bold">{field.name}</span>
-                        <img alt={field.name} className="rounded-lg shadow-md " src={field.photo} />
+                        {field.photo === "" ? (
+                            <img
+                                alt={field.name}
+                                className="rounded-lg shadow-md max-w-72"
+                                src="/no-image.webp"
+                                width={288}
+                            />
+                        ) : (
+                            <img
+                                alt={field.name}
+                                className="rounded-lg shadow-md max-w-72"
+                                src={field.photo}
+                                width={288}
+                            />
+                        )}
                         <p className="text-sm">{field.description}</p>
                     </Link>
                 ))}

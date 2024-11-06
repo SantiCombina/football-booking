@@ -1,5 +1,5 @@
 import {useEffect} from "react";
-import {useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 
 import {Button} from "../ui/button";
 
@@ -24,15 +24,29 @@ export function FieldDetail() {
     return (
         <div className="flex flex-col items-end">
             <div className="flex gap-10">
-                <img alt={fieldData.name} className="rounded-lg shadow-md max-w-96" src={fieldData.photo} />
+                {fieldData.photo === "" ? (
+                    <img
+                        alt={fieldData.name}
+                        className="rounded-lg shadow-md max-w-96"
+                        src="/no-image.webp"
+                        width={384}
+                    />
+                ) : (
+                    <img
+                        alt={fieldData.name}
+                        className="rounded-lg shadow-md max-w-96"
+                        src={fieldData.photo}
+                        width={384}
+                    />
+                )}
                 <div className="flex flex-col gap-3">
                     <span className="text-3xl font-bold">{fieldData.name}</span>
                     <p className="text-gray-700">{fieldData.description}</p>
                     <span className="text-sm text-gray-700">{fieldData.direction}</span>
                 </div>
             </div>
-            <Button className="bg-green-500 hover:bg-green-500/90" onClick={() => alert("Ir a reservar")}>
-                Reservar
+            <Button asChild className="bg-green-500 hover:bg-green-500/90">
+                <Link to={"/reservation"}>Reservar</Link>
             </Button>
         </div>
     );
