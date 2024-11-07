@@ -19,7 +19,7 @@ function App() {
             <Route element={<Layout />}>
                 <Route element={<Fields />} path="/fields" />
                 <Route element={<FieldDetail />} path="/field-detail/:id" />
-                <Route element={<Reservation />} path="/reservation" />
+                <Route element={<Reservation />} path="/reservation/:id" />
             </Route>
             <Route element={<NotFound />} path="*" />
         </Routes>

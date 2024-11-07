@@ -8,8 +8,10 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "./
 import {Input} from "./ui/input";
 
 import {useSignin} from "@/api/mutations/use-signin";
+import { useNavigate } from "react-router-dom";
 
 export function SignInForm() {
+    const navigate = useNavigate();
     const signinForm = useForm<SigninValues>({
         resolver: zodResolver(SigninSchema),
         defaultValues: {
@@ -23,9 +25,8 @@ export function SignInForm() {
     const onSubmit = (data: SigninValues) => {
         mutate(data, {
             onSuccess: () => {
-                alert("Inicio de sesión exitoso");
-                // Redirigir a la página principal u otra vista si es necesario
-            },
+                navigate("/fields");
+                            },
             onError: (error: any) => {
                 alert(`Error: ${error.message}`);
             },

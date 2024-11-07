@@ -35,7 +35,7 @@ export function FieldDetail() {
                     <img
                         alt={fieldData.name}
                         className="rounded-lg shadow-md max-w-96"
-                        src={fieldData.photo}
+                        src={`/images/${fieldData.photo}`}
                         width={384}
                     />
                 )}
@@ -46,7 +46,7 @@ export function FieldDetail() {
                 </div>
             </div>
             <Button asChild className="bg-green-500 hover:bg-green-500/90">
-                <Link to={"/reservation"}>Reservar</Link>
+                <Link to={`/reservation/${id}`}>Reservar</Link>
             </Button>
         </div>
     );

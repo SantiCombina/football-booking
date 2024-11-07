@@ -8,7 +8,10 @@ import {Input} from "./ui/input";
 import {SignupSchema, SignupValues} from "@/schemas/login-schema";
 import {useSignup} from "@/api/mutations/use-signup";
 
+import { useNavigate } from "react-router-dom";
+
 export function SignUpForm() {
+    const navigate = useNavigate();
     const signupForm = useForm<SignupValues>({
         resolver: zodResolver(SignupSchema),
         defaultValues: {
@@ -23,7 +26,7 @@ export function SignUpForm() {
     const onSubmit = (data: SignupValues) => {
         mutate(data, {
             onSuccess: () => {
-                alert("Registro exitoso");
+                navigate("/fields");
             },
             onError: (error: any) => {
                 alert(`Error: ${error.message}`);
