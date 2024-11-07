@@ -1,111 +1,142 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Button } from "../ui/button";
-import { useGetField } from "@/api/queries/use-fields";
-import { Calendar } from "@/components/ui/calendar";
-import { TimePicker } from "@/components/time-picker";
-import axios from "axios";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {format} from "date-fns";
+import {es} from "date-fns/locale";
+import {CalendarIcon} from "lucide-react";
+import {useForm} from "react-hook-form";
+import {useParams} from "react-router-dom";
+
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "../ui/select";
+
+import {Button} from "@/components/ui/button";
+import {Calendar} from "@/components/ui/calendar";
+import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
+import {cn} from "@/lib/utils";
+import {ReservationSchema, ReservationValues} from "@/schemas/reservation-schema";
+import {useReserveField} from "@/api/mutations/use-reservation";
+import {useAuth} from "@/store/auth-store";
 
 export function Reservation() {
-  const { id } = useParams();
-  const navigate = useNavigate();
+    const reservationForm = useForm<ReservationValues>({
+        resolver: zodResolver(ReservationSchema),
+        defaultValues: {
+            date: undefined,
+            time: undefined,
+        },
+    });
 
-  const { data: fieldData, isLoading: fieldLoading, isError: fieldError } = useGetField(id);
+    const {id} = useParams();
+    const {userId} = useAuth();
+    const {mutate: reserveField} = useReserveField();
 
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+    const onSubmit = (data: ReservationValues) => {
+        if (!data.date || !data.time) {
+            alert("Por favor, selecciona una fecha y hora.");
 
-  useEffect(() => {
-    if (!id || fieldError) {
-      console.error("Error al cargar la cancha o ID inválido");
-      navigate("/not-found");
-    }
-  }, [id, fieldError, navigate]);
-
-  useEffect(() => {
-    if (fieldLoading) {
-      console.log("Cargando los detalles de la cancha...");
-    } else if (fieldData) {
-      console.log("Datos de la cancha cargados: ", fieldData);
-    }
-  }, [fieldLoading, fieldData]);
-
-  if (!id || fieldError) {
-    return null;
-  }
-
-  if (fieldLoading || !fieldData) {
-    return <div>Cargando detalles de la cancha...</div>;
-  }
-
-  const handleConfirmReservation = async () => {
-    if (!selectedDate || !selectedTime) {
-      alert("Por favor selecciona una fecha y hora para la reserva.");
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        `http://localhost:3000/api/v1/reservation/${fieldData.id}`,
-        {
-          date: selectedDate.toISOString().split('T')[0], 
-          startTime: selectedTime,
-          id_user: 2,
-          id_field: id,
+            return;
         }
-      );
-      console.log("Reserva confirmada: ", response.data);
-      alert("Reserva confirmada");
-      navigate("/fields");
-    } catch (error) {
-      console.error("Error al hacer la reserva: ", error);
-      alert("Hubo un error al hacer la reserva. Intenta de nuevo.");
-    }
-  };
 
-  const handleDateSelect = (date: Date | undefined) => {
-    setSelectedDate(date);
-  };
+        if (!id) {
+            alert("ID del campo no encontrado.");
 
-  const handleTimeSelect = (time: string | null) => {
-    setSelectedTime(time);
-  };
+            return;
+        }
 
-  useEffect(() => {
-    console.log("Fecha seleccionada: ", selectedDate);
-    console.log("Hora seleccionada: ", selectedTime);
-  }, [selectedDate, selectedTime]);
+        if (!userId) {
+            alert("Usuario no encontrado.");
 
-  return (
-    <div className="flex flex-col items-center">
-      <h2 className="text-2xl font-bold mb-4">Reservar Canchita</h2>
+            return;
+        }
 
-      {/* Detalles de la cancha */}
-      <div className="mb-6">
-        <h3 className="text-lg font-semibold">{fieldData.name}</h3>
-        <p className="text-gray-700">{fieldData.description}</p>
-        <span className="text-sm text-gray-500">{fieldData.direction}</span>
-      </div>
+        const reservationData = {
+            date: format(data.date, "yyyy-MM-dd"),
+            startTime: data.time,
+            id_user: Number(userId),
+            id_field: id,
+        };
 
-      <Calendar
-        selected={selectedDate}
-        onSelect={handleDateSelect} 
-        mode="single" 
-        disabled={{ before: new Date() }} 
-      />
+        reserveField(reservationData);
+    };
 
-      <TimePicker
-        selectedTime={selectedTime}
-        onTimeSelect={handleTimeSelect} 
-        occupiedTimes={[]} 
-      />
+    const availableTimes = ["16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00"];
 
-      <Button
-        className="mt-4 bg-blue-500 hover:bg-blue-500/90"
-        onClick={handleConfirmReservation}
-      >
-        Confirmar Reserva
-      </Button>
-    </div>
-  );
+    return (
+        <div>
+            <Form {...reservationForm}>
+                <form className="flex flex-col w-full" onSubmit={reservationForm.handleSubmit(onSubmit)}>
+                    <FormField
+                        control={reservationForm.control}
+                        name="date"
+                        render={({field}) => (
+                            <FormItem className="flex flex-col">
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <FormControl>
+                                            <Button
+                                                className={cn(
+                                                    "w-[240px] pl-3 text-left font-normal",
+                                                    !field.value && "text-muted-foreground",
+                                                )}
+                                                variant={"outline"}
+                                            >
+                                                {field.value ? (
+                                                    format(field.value, "PPP", {locale: es})
+                                                ) : (
+                                                    <span>Selecciona una fecha</span>
+                                                )}
+                                                <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
+                                            </Button>
+                                        </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent align="start" className="w-auto p-0">
+                                        <Calendar
+                                            initialFocus
+                                            disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                                            locale={es}
+                                            mode="single"
+                                            selected={field.value}
+                                            onSelect={field.onChange}
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                                <div className="h-[20px]">
+                                    <FormMessage />
+                                </div>
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={reservationForm.control}
+                        name="time"
+                        render={({field}) => (
+                            <FormItem>
+                                <Select defaultValue={field.value} onValueChange={field.onChange}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue
+                                                placeholder={
+                                                    field.value ? field.value : <span>Selecciona una hora</span>
+                                                }
+                                            />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {availableTimes.map((time) => (
+                                            <SelectItem key={time} value={time}>
+                                                {time}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                <div className="h-[20px]">
+                                    <FormMessage />
+                                </div>
+                            </FormItem>
+                        )}
+                    />
+                    <Button type="submit">Reservar</Button>
+                </form>
+            </Form>
+        </div>
+    );
 }

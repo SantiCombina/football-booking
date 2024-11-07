@@ -1,5 +1,6 @@
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
+import {useNavigate} from "react-router-dom";
 
 import {SigninValues, SigninSchema} from "../schemas/login-schema";
 
@@ -8,7 +9,6 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "./
 import {Input} from "./ui/input";
 
 import {useSignin} from "@/api/mutations/use-signin";
-import { useNavigate } from "react-router-dom";
 
 export function SignInForm() {
     const navigate = useNavigate();
@@ -26,7 +26,7 @@ export function SignInForm() {
         mutate(data, {
             onSuccess: () => {
                 navigate("/fields");
-                            },
+            },
             onError: (error: any) => {
                 alert(`Error: ${error.message}`);
             },

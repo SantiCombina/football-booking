@@ -1,6 +1,6 @@
 import {useMutation} from "react-query";
 
-import {useAuth} from "@/store/authStore";
+import {useAuth} from "@/store/auth-store";
 
 type SigninData = {
     email: string;
@@ -8,7 +8,7 @@ type SigninData = {
 };
 
 export const useSignin = () => {
-    const {setToken} = useAuth();
+    const {setToken, setUserId} = useAuth();
 
     return useMutation(async (data: SigninData) => {
         const response = await fetch("http://localhost:3000/api/v1/signin", {
@@ -26,6 +26,7 @@ export const useSignin = () => {
         }
 
         setToken(result.token);
+        setUserId(result.userId);
 
         return result;
     });

@@ -1,5 +1,5 @@
-import { useQuery, useQueryClient } from "react-query";
-import { useNavigate } from "react-router-dom";
+import {useQuery, useQueryClient} from "react-query";
+import {useNavigate} from "react-router-dom";
 
 export const useGetFields = () => {
     const queryClient = useQueryClient();
@@ -15,6 +15,7 @@ export const useGetFields = () => {
             }
 
             const data = await response.json();
+
             return data;
         },
         onSuccess(data: any) {
