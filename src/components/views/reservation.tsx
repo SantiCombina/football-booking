@@ -3,13 +3,13 @@ import {format} from "date-fns";
 import {es} from "date-fns/locale";
 import {CalendarIcon} from "lucide-react";
 import {useForm} from "react-hook-form";
-import {useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "../ui/select";
 
 import {Button} from "@/components/ui/button";
 import {Calendar} from "@/components/ui/calendar";
-import {Form, FormControl, FormField, FormItem, FormMessage} from "@/components/ui/form";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {cn} from "@/lib/utils";
 import {ReservationSchema, ReservationValues} from "@/schemas/reservation-schema";
@@ -25,17 +25,12 @@ export function Reservation() {
         },
     });
 
+    const navigate = useNavigate();
     const {id} = useParams();
     const {userId} = useAuth();
     const {mutate: reserveField} = useReserveField();
 
     const onSubmit = (data: ReservationValues) => {
-        if (!data.date || !data.time) {
-            alert("Por favor, selecciona una fecha y hora.");
-
-            return;
-        }
-
         if (!id) {
             alert("ID del campo no encontrado.");
 
@@ -69,6 +64,7 @@ export function Reservation() {
                         name="date"
                         render={({field}) => (
                             <FormItem className="flex flex-col">
+                                <FormLabel className="mb-1">Fecha</FormLabel>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <FormControl>
@@ -110,6 +106,7 @@ export function Reservation() {
                         name="time"
                         render={({field}) => (
                             <FormItem>
+                                <FormLabel>Hora</FormLabel>
                                 <Select defaultValue={field.value} onValueChange={field.onChange}>
                                     <FormControl>
                                         <SelectTrigger>
@@ -134,7 +131,12 @@ export function Reservation() {
                             </FormItem>
                         )}
                     />
-                    <Button type="submit">Reservar</Button>
+                    <Button className="mt-1" type="submit">
+                        Reservar
+                    </Button>
+                    <Button className="mt-1" type="button" variant={"ghost"} onClick={() => navigate(-1)}>
+                        Volver
+                    </Button>
                 </form>
             </Form>
         </div>
