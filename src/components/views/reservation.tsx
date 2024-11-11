@@ -3,7 +3,7 @@ import {format} from "date-fns";
 import {es} from "date-fns/locale";
 import {CalendarIcon} from "lucide-react";
 import {useForm} from "react-hook-form";
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "../ui/select";
 
@@ -15,6 +15,7 @@ import {cn} from "@/lib/utils";
 import {ReservationSchema, ReservationValues} from "@/schemas/reservation-schema";
 import {useReserveField} from "@/api/mutations/use-reservation";
 import {useAuth} from "@/store/auth-store";
+import {useGetField} from "@/api/queries/use-fields";
 
 export function Reservation() {
     const reservationForm = useForm<ReservationValues>({
@@ -28,6 +29,7 @@ export function Reservation() {
     const navigate = useNavigate();
     const {id} = useParams();
     const {userId} = useAuth();
+    const {data: fieldData} = useGetField(id);
     const {mutate: reserveField} = useReserveField();
 
     const onSubmit = (data: ReservationValues) => {
@@ -56,9 +58,20 @@ export function Reservation() {
     const availableTimes = ["16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00"];
 
     return (
-        <div>
+        <div className="flex flex-col items-center justify-center">
+            <h2 className="pb-8 text-4xl font-extrabold">Reservar</h2>
+            {fieldData && (
+                <div className="space-y-1">
+                    <span className="text-xl font-semibold">{fieldData.name}</span>
+                    <p className="text-sm">{fieldData.description}</p>
+                    <p className="text-xs text-gray-600">{fieldData.direction}</p>
+                </div>
+            )}
+
+            <hr className="w-full my-4" />
+
             <Form {...reservationForm}>
-                <form className="flex flex-col w-full" onSubmit={reservationForm.handleSubmit(onSubmit)}>
+                <form className="flex flex-col w-fit" onSubmit={reservationForm.handleSubmit(onSubmit)}>
                     <FormField
                         control={reservationForm.control}
                         name="date"
