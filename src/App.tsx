@@ -1,7 +1,6 @@
 import {Route, Routes} from "react-router-dom";
 
 import {Layout} from "./components/layout/layout";
-import {LayoutBackOffice} from "./components/layout/layout-back-office";
 import {FieldDetail} from "./components/views/field-detail";
 import {Fields} from "./components/views/fields";
 import {Home} from "./components/views/home";
@@ -12,10 +11,8 @@ import {Reservation} from "./components/views/reservation";
 function App() {
     return (
         <Routes>
-            <Route element={<LayoutBackOffice />}>
-                <Route element={<Home />} path="/" />
-                <Route element={<Login />} path="/login" />
-            </Route>
+            <Route element={<Home />} path="/" />
+            <Route element={<Login />} path="/login" />
             <Route element={<Layout />}>
                 <Route element={<Fields />} path="/fields" />
                 <Route element={<FieldDetail />} path="/field-detail/:id" />
