@@ -60,12 +60,14 @@ export function Reservation() {
     return (
         <div className="flex flex-col items-center justify-center">
             <h2 className="pb-8 text-4xl font-extrabold">Reservar</h2>
-            {fieldData && (
+            {fieldData ? (
                 <div className="space-y-1">
                     <span className="text-xl font-semibold">{fieldData.name}</span>
                     <p className="text-sm">{fieldData.description}</p>
                     <p className="text-xs text-gray-600">{fieldData.direction}</p>
                 </div>
+            ) : (
+                <div className="text-xl text-center text-gray-600">Cargando...</div>
             )}
 
             <hr className="w-full my-4" />

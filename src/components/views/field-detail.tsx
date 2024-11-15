@@ -8,7 +8,7 @@ import {useGetField} from "@/api/queries/use-fields";
 export function FieldDetail() {
     const navigate = useNavigate();
     const {id} = useParams();
-    const {data: fieldData} = useGetField(id);
+    const {data: fieldData, isLoading} = useGetField(id);
 
     useEffect(() => {
         if (!id) {
@@ -16,8 +16,12 @@ export function FieldDetail() {
         }
     }, []); // eslint-disable-line
 
+    if (isLoading) {
+        return <div className="text-xl text-center text-gray-600">Cargando...</div>;
+    }
+
     if (!fieldData) {
-        return <div>Cargando...</div>;
+        return <div className="text-xl text-center text-gray-600">Cancha no encontrada</div>;
     }
 
     return (
